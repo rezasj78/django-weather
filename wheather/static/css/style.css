@@ -1,0 +1,22 @@
+body {
+    background: #1b1e21;
+    letter-spacing: 0.2em;
+    font-size: 0.8em;
+}
+
+.container {
+    max-width: 400px;
+}
+
+input[type=text]:focus {
+    color: #fff;!important;
+
+}
+
+.icon{
+    position: relative;
+    top: -100px;
+    border-radius: 50%;
+    width: 100px;
+    margin-bottom: -50px;
+}
