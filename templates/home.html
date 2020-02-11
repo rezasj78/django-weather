@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-grid.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-reboot.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<div class="container my-5 mx-auto">
+    <h1 class="text-muted text-center my-4">Reza Weather</h1>
+
+    <form class="change-location my-4 text-center text-muted">
+        <label for="city">Enter Location for weather information</label>
+        <input type="text" name="city" class="form-control p-4 bg-dark text-light text-center inp">
+    </form>
+
+    <div class="card shadow-lg rounded bg-dark d-none">
+        <img src="https://via.placeholder.com/400x300" class="time card-img">
+        <div class="icon bg-dark mx-auto text-center">
+            <img src="" alt="">
+        </div>
+        <div class="icon bg-dark mx-auto text-center text-light details">
+            <h5 class="my-3 CN">City name</h5>
+            <div class="my-3">Weather condition</div>
+            <div class="display-4 my-4">
+                <span class="tem">temp</span>
+                <span>℃</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/forecast.js' %}"></script>
+<script >
+const cityForm = document.querySelector('.change-location')
+const card = document.querySelector('.card')
+const detail = document.querySelector('.details')
+const time = document.querySelector('img.time')
+const icon = document.querySelector('.icon img')
+
+const updateUI = data => {
+    console.log(data)
+    detail.innerHTML = `<h5 class="my-3 CN">${data.cityId.EnglishName}</h5>
+            <div class="my-3">${data.weather.WeatherText}</div>
+            <div class="display-4 my-4">
+                <span class="tem">${data.weather.Temperature.Metric.Value}</span>
+                <span>℃</span>
+            </div>`
+    card.classList.remove('d-none');
+
+    let timeSrc = null;
+    if (data.weather.IsDayTime)
+        timeSrc = '{% static "js/img" %}/day.svg'
+    else
+        timeSrc = '{% static "js/img" %}/night.svg'
+    time.setAttribute('src', timeSrc)
+
+    icon.setAttribute('src', `{% static 'js/img/icons' %}/${data.weather.WeatherIcon}.svg`)
+};
+
+const updateCity = async cityName => {
+    const cityId = await getCity(cityName);
+    const weather = await getWeather(cityId.Key);
+    return {cityId, weather}
+}
+
+cityForm.addEventListener('submit', evt => {
+    evt.preventDefault();
+
+    //get city
+    const city = cityForm.city.value.trim();
+    cityForm.reset();
+
+    //update the ui with city info
+    updateCity(city)
+        .then(result => updateUI(result))
+        .catch(err => console.log(err))
+})
+</script>
+
+</body>
+</html>
